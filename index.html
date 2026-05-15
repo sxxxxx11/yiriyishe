@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>一日一舍</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/gh/HuiwenFont/huiwen-font@latest/dist/HuiwenMingchaoTi.min.css" rel="stylesheet">
+    <style>
+        /* ========== CSS变量 ========== */
+        :root {
+            --linen-bg: #f5f0e8;
+            --linen-dark: #ebe4d6;
+            --coffee: #5c4a3d;
+            --coffee-light: #8b7355;
+            --coffee-faint: #a69178;
+            --card-bg: #faf7f2;
+            --border-color: #d4c9b8;
+        }
+
+        /* ========== 基础重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Huiwen Mingchao Ti', 'SimSun', 'STSong', serif;
+            background-color: var(--linen-bg);
+            color: var(--coffee);
+            min-height: 100vh;
+            padding-bottom: 70px;
+        }
+
+        /* ========== 布局容器 ========== */
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        /* ========== 顶部标题区 ========== */
+        .header {
+            padding: 32px 16px 24px;
+            text-align: center;
+        }
+
+        .header .date {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--coffee);
+            margin-bottom: 4px;
+        }
+
+        .header .weekday {
+            font-size: 14px;
+            color: var(--coffee-light);
+            margin-bottom: 16px;
+        }
+
+        .header .slogan {
+            font-size: 13px;
+            color: var(--coffee-faint);
+            letter-spacing: 1px;
+        }
+
+        /* ========== Tab内容区 ========== */
+        .tab-content {
+            display: none;
+            padding: 0 16px 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== 底部Tab导航 ========== */
+        .tab-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(250, 247, 242, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border-color);
+            padding: 8px 0;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+
+        .tab-nav-inner {
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .tab-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 20px;
+            cursor: pointer;
+            color: var(--coffee-faint);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .tab-nav-item.active {
+            color: var(--coffee);
+        }
+
+        .tab-nav-item svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        .tab-nav-item span {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== 今日计数 ========== */
+        .today-count {
+            text-align: center;
+            font-size: 13px;
+            color: var(--coffee-faint);
+            margin-bottom: 16px;
+            padding: 8px;
+        }
+
+        .today-count span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--coffee);
+            margin: 0 4px;
+        }
+
+        /* ========== 记录Tab样式 ========== */
+        .upload-area {
+            display: block;
+            background: var(--card-bg);
+            border: 1.5px dashed var(--border-color);
+            border-radius: 2px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        .upload-area:active {
+            border-color: var(--coffee-light);
+        }
+
+        .upload-area .icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            color: var(--coffee-faint);
+        }
+
+        .upload-area .text {
+            font-size: 15px;
+            color: var(--coffee-light);
+            margin-bottom: 4px;
+        }
+
+        .upload-area .hint {
+            font-size: 12px;
+            color: var(--coffee-faint);
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        /* 表单 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--coffee-light);
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--coffee);
+            outline: none;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            border-color: var(--coffee-light);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* 分类9宫格 */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .category-item {
+            aspect-ratio: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px 4px;
+        }
+
+        .category-item.selected {
+            border-color: var(--coffee);
+            background: var(--linen-dark);
+        }
+
+        .category-item svg {
+            width: 20px;
+            height: 20px;
+            color: var(--coffee-faint);
+            margin-bottom: 2px;
+        }
+
+        .category-item.selected svg {
+            color: var(--coffee);
+        }
+
+        .category-item span {
+            font-size: 10px;
+            color: var(--coffee-faint);
+        }
+
+        .category-item.selected span {
+            color: var(--coffee);
+        }
+
+        /* 提交按钮 */
+        .btn-submit {
+            width: 100%;
+            background: var(--coffee);
+            color: var(--card-bg);
+            border: none;
+            border-radius: 2px;
+            padding: 14px;
+            font-family: inherit;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit:not(:disabled):active {
+            opacity: 0.8;
+        }
+
+        /* ========== 日历Tab样式 ========== */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+
+        .calendar-header .month-nav {
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--coffee-light);
+        }
+
+        .calendar-header .month-nav svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .calendar-header .month-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--coffee);
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .calendar-weekdays span {
+            font-size: 11px;
+            color: var(--coffee-faint);
+            padding: 8px 0;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--coffee);
+            background: var(--card-bg);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 4px;
+        }
+
+        .calendar-day.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .calendar-day.today {
+            border: 1.5px solid var(--coffee);
+        }
+
+        .calendar-day:not(.empty):active {
+            background: var(--linen-dark);
+        }
+
+        /* ========== 照片墙样式 ========== */
+        .gallery-empty {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .gallery-empty .icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            color: var(--coffee-faint);
+        }
+
+        .gallery-empty .text {
+            font-size: 14px;
+            color: var(--coffee-light);
+            line-height: 1.6;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: var(--linen-dark);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:active img {
+            transform: scale(0.95);
+        }
+
+        /* ========== 月度洞察 ========== */
+        .month-insight {
+            background: var(--linen-dark);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .month-insight .insight-main {
+            font-size: 15px;
+            color: var(--coffee);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .month-insight .insight-main strong {
+            font-weight: 600;
+        }
+
+        .month-insight .insight-sub {
+            font-size: 12px;
+            color: var(--coffee-faint);
+        }
+
+        .month-insight .insight-loading {
+            font-size: 13px;
+            color: var(--coffee-faint);
+        }
+
+        /* ========== 照片详情样式 ========== */
+        .stamp-detail {
+            padding: 4px 0;
+        }
+
+        .stamp-detail-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            background: var(--linen-bg);
+        }
+
+        .stamp-detail-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stamp-detail-category {
+            font-size: 12px;
+            color: var(--coffee-light);
+            background: var(--linen-bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .stamp-detail-date {
+            font-size: 12px;
+            color: var(--coffee-faint);
+        }
+
+        .stamp-detail-desc {
+            font-size: 14px;
+            color: var(--coffee);
+            line-height: 1.6;
+            padding: 12px;
+            background: var(--linen-bg);
+            border-radius: 8px;
+            font-style: italic;
+        }
+
+        /* ========== Toast提示 ========== */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--coffee);
+            color: var(--card-bg);
+            padding: 14px 28px;
+            border-radius: 2px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* ========== 上传区预览态 ========== */
+        .upload-area.has-preview {
+            padding: 20px;
+        }
+
+        .upload-area .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 2px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .upload-area .change-hint {
+            font-size: 12px;
+            color: var(--coffee-faint);
+            margin-top: 8px;
+        }
+
+        /* ========== 日历记录标记 ========== */
+        .calendar-day.has-record {
+            position: relative;
+        }
+
+        .calendar-day.has-record::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            background: var(--coffee);
+            border-radius: 50%;
+        }
+
+        /* ========== Modal弹窗 ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 200;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            border-radius: 16px 16px 0 0;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+        }
+
+        .modal-header span {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--coffee);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--coffee-faint);
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* 日期记录卡片 */
+        .date-record-card {
+            background: var(--linen-bg);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .date-record-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .date-record-card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .date-record-card .card-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--coffee);
+        }
+
+        .date-record-card .card-category {
+            font-size: 11px;
+            color: var(--coffee-light);
+            background: var(--card-bg);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .date-record-card .card-desc {
+            font-size: 13px;
+            color: var(--coffee-light);
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .date-record-card .card-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-top: 8px;
+        }
+
+        .modal-empty {
+            text-align: center;
+            padding: 20px;
+            color: var(--coffee-faint);
+            font-size: 14px;
+        }
+
+        /* ========== 勋章详情样式 ========== */
+        .stamp-detail {
+            padding: 4px 0;
+        }
+
+        .stamp-detail-img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            background: var(--linen-bg);
+        }
+
+        .stamp-detail-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stamp-detail-category {
+            font-size: 12px;
+            color: var(--coffee-light);
+            background: var(--linen-bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .stamp-detail-date {
+            font-size: 12px;
+            color: var(--coffee-faint);
+        }
+
+        .stamp-detail-desc {
+            font-size: 14px;
+            color: var(--coffee);
+            line-height: 1.6;
+            padding: 12px;
+            background: var(--linen-bg);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* ========== 断舍离洞察样式 ========== */
+        .insight-section {
+            border-top: 1px dashed var(--border-color);
+            padding-top: 20px;
+            margin-top: 8px;
+        }
+
+        .insight-title {
+            font-size: 12px;
+            color: var(--coffee-faint);
+            text-align: center;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .insight-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 16px;
+        }
+
+        .insight-stat {
+            text-align: center;
+        }
+
+        .insight-stat-num {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--coffee);
+            margin-bottom: 4px;
+        }
+
+        .insight-stat-label {
+            font-size: 11px;
+            color: var(--coffee-faint);
+        }
+
+        .insight-text {
+            text-align: center;
+            font-size: 13px;
+            color: var(--coffee-light);
+            line-height: 1.6;
+            padding: 12px;
+            background: var(--linen-bg);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题区 -->
+    <header class="header">
+        <div class="date" id="currentDate">5 月 14 日</div>
+        <div class="weekday" id="currentWeekday">星期四</div>
+        <div class="slogan">今日，让一件物品离开你的生活</div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <!-- 记录Tab -->
+        <section id="tab-record" class="tab-content active">
+            <div class="today-count" id="todayCount">今日已记录 <span>0</span> 件</div>
+
+            <label for="photoInput" class="upload-area" id="uploadArea">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <div class="text">添加物品照片</div>
+                <div class="hint">点击选择拍照或从相册上传</div>
+            </label>
+            <input type="file" id="photoInput" accept="image/*" style="display:none;">
+
+            <div class="form-group">
+                <label>物品分类</label>
+                <div class="category-grid" id="categoryGrid">
+                    <!-- 分类由JS生成 -->
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>关于这件物品</label>
+                <textarea id="itemDesc" placeholder="说说它的故事..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>物品名称 <span style="font-weight:normal;color:var(--coffee-faint)">(可选)</span></label>
+                <input type="text" id="itemName" placeholder="不填则自动命名">
+            </div>
+
+            <button class="btn-submit" id="submitBtn" disabled>记入今日一舍</button>
+        </section>
+
+        <!-- 日历Tab -->
+        <section id="tab-calendar" class="tab-content">
+            <!-- 月度洞察 -->
+            <div class="month-insight" id="monthInsight">
+                <div class="insight-loading">正在生成洞察...</div>
+            </div>
+
+            <div class="calendar-header">
+                <button class="month-nav" id="prevMonth">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <span class="month-title" id="monthTitle">2026年5月</span>
+                <button class="month-nav" id="nextMonth">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="calendar-weekdays">
+                <span>日</span>
+                <span>一</span>
+                <span>二</span>
+                <span>三</span>
+                <span>四</span>
+                <span>五</span>
+                <span>六</span>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 日历网格由JS生成 -->
+            </div>
+        </section>
+
+        <!-- 照片墙Tab -->
+        <section id="tab-stamps" class="tab-content">
+            <div class="gallery-empty" id="stampsEmpty">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <div class="text">还没有照片记录<br>开始第一次断舍离吧 ✦</div>
+            </div>
+
+            <div class="gallery-grid" id="stampsGrid" style="display: none;">
+                <!-- 照片由JS生成 -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部Tab导航 -->
+    <nav class="tab-nav">
+        <div class="tab-nav-inner">
+            <a class="tab-nav-item active" data-tab="record" href="javascript:void(0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>记录</span>
+            </a>
+            <a class="tab-nav-item" data-tab="calendar" href="javascript:void(0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                </svg>
+                <span>日历</span>
+            </a>
+            <a class="tab-nav-item" data-tab="stamps" href="javascript:void(0)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                </svg>
+                <span>勋章</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Toast提示 -->
+    <div id="toast" class="toast"></div>
+
+    <!-- 日期详情Modal -->
+    <div id="dateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span id="modalDate"></span>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ========== 全局变量 ========== */
+        var STORAGE_KEY = 'yiri-yi-she-records';
+        var IMGBB_API_KEY = '2703e15780d97bf8364bc384553ccda6';
+        var currentTab = 'record';
+        var currentYear = 2026;
+        var currentMonth = 4; // 0-indexed，4代表5月
+        var selectedCategory = null;
+        var currentPhotoFile = null; // 存储原始文件对象
+        var currentPhotoData = null;
+
+        // 分类定义
+        var categories = [
+            { id: 'clothing', name: '衣物', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2l-4 4 3 1v15h14V7l3-1-4-4-4 2h-4z"/></svg>' },
+            { id: 'books', name: '书籍', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg>' },
+            { id: 'electronics', name: '电子', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>' },
+            { id: 'kitchen', name: '厨具', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6"/><path d="M12 3v8M8 7l4-4 4 4"/></svg>' },
+            { id: 'furniture', name: '家具', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="4" rx="1"/><path d="M4 12v6M20 12v6"/></svg>' },
+            { id: 'decoration', name: '饰品', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>' },
+            { id: 'personal', name: '护理', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' },
+            { id: 'food', name: '食品', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>' },
+            { id: 'bags', name: '箱包', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>' },
+            { id: 'others', name: '其他', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>' }
+        ];
+
+        /* ========== 初始化 ========== */
+        function init() {
+            // 先尝试清理旧数据（移除过大的照片数据）
+            cleanupOldData();
+
+            try {
+                bindTabEvents();
+            } catch(e) {
+                console.error('绑定Tab事件失败:', e);
+            }
+
+            try {
+                initDateDisplay();
+            } catch(e) {
+                console.error('初始化日期显示失败:', e);
+            }
+
+            try {
+                renderCategoryGrid();
+            } catch(e) {
+                console.error('渲染分类网格失败:', e);
+            }
+
+            try {
+                renderCalendar();
+            } catch(e) {
+                console.error('渲染日历失败:', e);
+            }
+
+            try {
+                bindFormEvents();
+            } catch(e) {
+                console.error('绑定表单事件失败:', e);
+            }
+
+            try {
+                bindModalEvents();
+            } catch(e) {
+                console.error('绑定Modal事件失败:', e);
+            }
+
+            try {
+                switchTab('record');
+            } catch(e) {
+                console.error('切换Tab失败:', e);
+            }
+
+            try {
+                updateTodayCount();
+            } catch(e) {
+                console.error('更新今日计数失败:', e);
+            }
+        }
+
+        /* ========== 清理旧数据 ========== */
+        function cleanupOldData() {
+            try {
+                var records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                var cleaned = false;
+                for (var i = 0; i < records.length; i++) {
+                    if (records[i].photo) {
+                        records[i].photo = null;
+                        cleaned = true;
+                    }
+                }
+                if (cleaned) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+                }
+            } catch(e) {
+                // 如果连读取都失败，直接清空
+                localStorage.setItem(STORAGE_KEY, '[]');
+            }
+        }
+
+        /* ========== 图片压缩 ========== */
+        function compressImage(file, maxWidth, maxHeight, quality, callback) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var width = img.width;
+                    var height = img.height;
+
+                    // 计算缩放比例
+                    if (width > maxWidth) {
+                        height = Math.round(height * maxWidth / width);
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width = Math.round(width * maxHeight / height);
+                        height = maxHeight;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // 输出压缩后的 base64
+                    var compressed = canvas.toDataURL('image/jpeg', quality);
+                    callback(compressed);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ========== 上传到 imgbb ========== */
+        function uploadToImgbb(base64Data, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'https://api.imgbb.com/1/upload?key=' + IMGBB_API_KEY, true);
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            callback(true, response.data.url);
+                        } else {
+                            callback(false, '上传失败: ' + JSON.stringify(response));
+                        }
+                    } catch(e) {
+                        callback(false, '解析响应失败');
+                    }
+                } else {
+                    callback(false, '网络错误: ' + xhr.status);
+                }
+            };
+
+            xhr.onerror = function() {
+                callback(false, '网络连接失败');
+            };
+
+            // 转换 base64 为 FormData (imgbb需要纯base64字符串，不带data:前缀)
+            var formData = new FormData();
+            var base64Str = base64Data.replace(/^data:image\/\w+;base64,/, '');
+            formData.append('image', base64Str);
+            xhr.send(formData);
+        }
+
+        /* ========== Modal事件 ========== */
+        function bindModalEvents() {
+            document.getElementById('modalClose').addEventListener('click', closeDateModal);
+            document.getElementById('dateModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeDateModal();
+                }
+            });
+        }
+
+        /* ========== Tab切换 ========== */
+        function switchTab(tabName) {
+            var tabItems = document.querySelectorAll('.tab-nav-item');
+            var tabContents = document.querySelectorAll('.tab-content');
+
+            for (var i = 0; i < tabItems.length; i++) {
+                tabItems[i].classList.remove('active');
+            }
+
+            for (var j = 0; j < tabContents.length; j++) {
+                tabContents[j].classList.remove('active');
+            }
+
+            document.querySelector('.tab-nav-item[data-tab="' + tabName + '"]').classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            currentTab = tabName;
+
+            // 切换时刷新数据
+            if (tabName === 'stamps') {
+                renderGallery();
+            }
+            if (tabName === 'calendar') {
+                renderMonthInsight();
+                renderCalendar();
+            }
+        }
+
+        function bindTabEvents() {
+            var tabItems = document.querySelectorAll('.tab-nav-item');
+            for (var i = 0; i < tabItems.length; i++) {
+                tabItems[i].addEventListener('click', function(e) {
+                    var tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            }
+        }
+
+        /* ========== 日期显示 ========== */
+        function initDateDisplay() {
+            var now = new Date();
+            var month = now.getMonth() + 1;
+            var day = now.getDate();
+            var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            var weekday = weekdays[now.getDay()];
+
+            document.getElementById('currentDate').textContent = month + ' 月 ' + day + ' 日';
+            document.getElementById('currentWeekday').textContent = weekday;
+
+            currentYear = now.getFullYear();
+            currentMonth = now.getMonth();
+        }
+
+        /* ========== 分类网格 ========== */
+        function renderCategoryGrid() {
+            var grid = document.getElementById('categoryGrid');
+            var html = '';
+
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                html += '<div class="category-item" data-id="' + cat.id + '">';
+                html += cat.icon;
+                html += '<span>' + cat.name + '</span>';
+                html += '</div>';
+            }
+
+            grid.innerHTML = html;
+
+            // 绑定点击事件
+            var items = grid.querySelectorAll('.category-item');
+            for (var j = 0; j < items.length; j++) {
+                items[j].addEventListener('click', function() {
+                    var wasSelected = this.classList.contains('selected');
+                    items.forEach(function(item) {
+                        item.classList.remove('selected');
+                    });
+                    if (!wasSelected) {
+                        this.classList.add('selected');
+                        selectedCategory = this.getAttribute('data-id');
+                    } else {
+                        selectedCategory = null;
+                    }
+                    updateSubmitButton();
+                });
+            }
+        }
+
+        /* ========== 提交按钮状态 ========== */
+        function updateSubmitButton() {
+            var btn = document.getElementById('submitBtn');
+            var selected = !!selectedCategory;
+            btn.disabled = !selected;
+            // 调试用：更新按钮文字显示状态
+            btn.textContent = selected ? '记入今日一舍 ✓' : '请先选择分类';
+        }
+
+        /* ========== 照片预览 ========== */
+        function handlePhotoSelect(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            // 保存原始文件对象用于上传
+            currentPhotoFile = file;
+
+            // 用 FileReader 显示预览
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                currentPhotoData = e.target.result;
+                showPhotoPreview(currentPhotoData);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showPhotoPreview(dataUrl) {
+            var uploadArea = document.getElementById('uploadArea');
+            uploadArea.classList.add('has-preview');
+            uploadArea.innerHTML = '<img class="preview-img" src="' + dataUrl + '" alt="预览">' +
+                                   '<div class="change-hint">点击更换</div>';
+        }
+
+        function resetUploadArea() {
+            var uploadArea = document.getElementById('uploadArea');
+            uploadArea.classList.remove('has-preview');
+            uploadArea.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+                    '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>' +
+                    '<circle cx="12" cy="13" r="4"/>' +
+                '</svg>' +
+                '<div class="text">添加物品照片</div>' +
+                '<div class="hint">点击选择拍照或从相册上传</div>';
+        }
+
+        /* ========== 表单事件绑定 ========== */
+        function bindFormEvents() {
+            // 照片选择
+            document.getElementById('photoInput').addEventListener('change', handlePhotoSelect);
+
+            // 输入框变化
+            document.getElementById('itemName').addEventListener('input', updateSubmitButton);
+
+            // 提交按钮
+            document.getElementById('submitBtn').addEventListener('click', handleSubmit);
+        }
+
+        /* ========== 提交处理（异步上传图片） ========== */
+        function handleSubmit() {
+            var btn = document.getElementById('submitBtn');
+            var name = document.getElementById('itemName').value.trim();
+            var desc = document.getElementById('itemDesc').value.trim();
+            var category = selectedCategory;
+
+            if (!category) {
+                showToast('请选择物品分类');
+                return;
+            }
+
+            // 如果名称为空，自动生成
+            var finalName = name;
+            if (!finalName) {
+                finalName = generateAutoName(category);
+            }
+
+            // 显示上传中状态
+            btn.disabled = true;
+            btn.textContent = '上传中...';
+
+            // 处理图片上传
+            var doSaveRecord = function(photoUrl) {
+                try {
+                    var record = {
+                        id: Date.now(),
+                        date: getTodayString(),
+                        dateObj: getShortDateString(),
+                        fullDate: getFullDateString(),
+                        weekday: getWeekdayString(),
+                        photo: photoUrl, // 存储 imgbb URL
+                        cutoutPhoto: null,
+                        itemName: finalName,
+                        desc: desc,
+                        category: category,
+                        categoryName: getCategoryName(category),
+                        tagline: ''
+                    };
+
+                    var records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                    records.push(record);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+
+                    showToast('记入成功！今日一舍 +1');
+                    renderCalendar();
+                    renderGallery();
+                    resetForm();
+                } catch(e) {
+                    alert('保存失败: ' + e.message);
+                    btn.disabled = false;
+                    btn.textContent = '记入今日一舍 ✓';
+                }
+            };
+
+            // 如果有照片，先上传
+            if (currentPhotoFile) {
+                // 先压缩
+                compressImage(currentPhotoFile, 800, 800, 0.8, function(compressedData) {
+                    // 上传到 imgbb
+                    uploadToImgbb(compressedData, function(success, result) {
+                        if (success) {
+                            doSaveRecord(result);
+                        } else {
+                            alert('图片上传失败: ' + result + '，但记录仍会保存');
+                            doSaveRecord(null);
+                        }
+                    });
+                });
+            } else {
+                // 没有照片，直接保存
+                doSaveRecord(null);
+            }
+        }
+
+        /* ========== 自动生成名称 ========== */
+        function generateAutoName(category) {
+            var today = getTodayString();
+            var records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            var count = 0;
+            for (var i = 0; i < records.length; i++) {
+                if (records[i].date === today && records[i].category === category) {
+                    count++;
+                }
+            }
+            count++; // 当前这件
+            return '第' + count + '件' + getCategoryName(category);
+        }
+
+        /* ========== 重置表单 ========== */
+        function resetForm() {
+            currentPhotoFile = null;
+            currentPhotoData = null;
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemDesc').value = '';
+            // 完全重置分类
+            selectedCategory = null;
+            var items = document.querySelectorAll('.category-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.remove('selected');
+            }
+            resetUploadArea();
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = '请先选择分类';
+            updateTodayCount();
+        }
+
+        /* ========== 更新今日计数 ========== */
+        function updateTodayCount() {
+            var today = getTodayString();
+            var records = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            var count = 0;
+            for (var i = 0; i < records.length; i++) {
+                if (records[i].date === today) {
+                    count++;
+                }
+            }
+            var countEl = document.getElementById('todayCount');
+            if (countEl) {
+                countEl.innerHTML = '今日已记录 <span>' + count + '</span> 件';
+            }
+        }
+
+        /* ========== Toast提示 ========== */
+        function showToast(message) {
+            var toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        /* ========== 日期辅助函数 ========== */
+        function getTodayString() {
+            var now = new Date();
+            var y = now.getFullYear();
+            var m = now.getMonth() + 1;
+            var d = now.getDate();
+            m = m < 10 ? '0' + m : m;
+            d = d < 10 ? '0' + d : d;
+            return y + '-' + m + '-' + d;
+        }
+
+        function getShortDateString() {
+            var now = new Date();
+            var m = now.getMonth() + 1;
+            var d = now.getDate();
+            return m + '月' + d + '日';
+        }
+
+        function getFullDateString() {
+            var now = new Date();
+            var y = now.getFullYear();
+            var m = now.getMonth() + 1;
+            var d = now.getDate();
+            return y + '年' + m + '月' + d + '日';
+        }
+
+        function getWeekdayString() {
+            var weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            return weekdays[new Date().getDay()];
+        }
+
+        function getCategoryName(id) {
+            for (var i = 0; i < categories.length; i++) {
+                if (categories[i].id === id) return categories[i].name;
+            }
+            return '';
+        }
+
+        /* ========== 数据读取函数 ========== */
+        function getRecords() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        }
+
+        function getRecordsByDate(dateStr) {
+            var records = getRecords();
+            var result = [];
+            for (var i = 0; i < records.length; i++) {
+                if (records[i].date === dateStr) {
+                    result.push(records[i]);
+                }
+            }
+            return result;
+        }
+
+        function hasRecordsForDate(year, month, day) {
+            var m = month + 1;
+            m = m < 10 ? '0' + m : m;
+            day = day < 10 ? '0' + day : day;
+            var dateStr = year + '-' + m + '-' + day;
+            var records = getRecordsByDate(dateStr);
+            return records.length > 0;
+        }
+
+        /* ========== 日历渲染（增强版） ========== */
+        function renderCalendar() {
+            var grid = document.getElementById('calendarGrid');
+            var title = document.getElementById('monthTitle');
+
+            title.textContent = currentYear + '年' + (currentMonth + 1) + '月';
+
+            var firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            var daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            var today = new Date();
+            var isCurrentMonth = (today.getFullYear() === currentYear && today.getMonth() === currentMonth);
+            var todayDate = today.getDate();
+
+            var html = '';
+            var totalCells = firstDay + daysInMonth;
+            var rows = Math.ceil(totalCells / 7);
+
+            for (var row = 0; row < rows; row++) {
+                for (var col = 0; col < 7; col++) {
+                    var cellIndex = row * 7 + col;
+                    var dayNum = cellIndex - firstDay + 1;
+
+                    if (cellIndex < firstDay || dayNum > daysInMonth) {
+                        html += '<div class="calendar-day empty"></div>';
+                    } else {
+                        var classes = 'calendar-day';
+                        if (isCurrentMonth && dayNum === todayDate) {
+                            classes += ' today';
+                        }
+                        // 检查是否有记录
+                        if (hasRecordsForDate(currentYear, currentMonth, dayNum)) {
+                            classes += ' has-record';
+                        }
+                        html += '<div class="' + classes + '" data-day="' + dayNum + '">' + dayNum + '</div>';
+                    }
+                }
+            }
+
+            grid.innerHTML = html;
+
+            // 绑定日期点击事件
+            var days = grid.querySelectorAll('.calendar-day:not(.empty)');
+            for (var i = 0; i < days.length; i++) {
+                days[i].addEventListener('click', function() {
+                    var day = parseInt(this.getAttribute('data-day'), 10);
+                    openDateModal(day);
+                });
+            }
+
+            // 绑定月份切换
+            document.getElementById('prevMonth').onclick = function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderMonthInsight();
+                renderCalendar();
+            };
+
+            document.getElementById('nextMonth').onclick = function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderMonthInsight();
+                renderCalendar();
+            };
+        }
+
+        /* ========== 渲染月度洞察 ========== */
+        function renderMonthInsight() {
+            var insightEl = document.getElementById('monthInsight');
+            var records = getRecords();
+            var insights = calculateInsights();
+
+            // 计算当月记录数
+            var monthStr = currentYear + '-' + ((currentMonth + 1) < 10 ? '0' : '') + (currentMonth + 1);
+            var monthCount = 0;
+            var monthCategoryCount = {};
+
+            for (var i = 0; i < records.length; i++) {
+                if (records[i].date.substring(0, 7) === monthStr) {
+                    monthCount++;
+                    var cat = records[i].categoryName;
+                    monthCategoryCount[cat] = (monthCategoryCount[cat] || 0) + 1;
+                }
+            }
+
+            // 找出当月最常见分类
+            var monthTopCat = '';
+            var maxCat = 0;
+            for (var cat in monthCategoryCount) {
+                if (monthCategoryCount[cat] > maxCat) {
+                    maxCat = monthCategoryCount[cat];
+                    monthTopCat = cat;
+                }
+            }
+
+            // 生成洞察文案
+            var html = '';
+            if (records.length === 0) {
+                html = '<div class="insight-loading">还没有记录，开始你的第一次断舍离吧 ✦</div>';
+            } else {
+                html = '<div class="insight-main">';
+                if (monthCount > 0) {
+                    html += '这个月你放下了 <strong>' + monthCount + '</strong> 件物品';
+                    if (monthTopCat) {
+                        html += '，最常告别的是「' + monthTopCat + '」';
+                    }
+                } else {
+                    html += '本月还没有记录，继续加油 ✦';
+                }
+                html += '</div>';
+                html += '<div class="insight-sub">' + insights.insightText + '</div>';
+            }
+
+            insightEl.innerHTML = html;
+        }
+
+        /* ========== 日期Modal ========== */
+        function openDateModal(day) {
+            var m = currentMonth + 1;
+            m = m < 10 ? '0' + m : m;
+            var d = day < 10 ? '0' + day : day;
+            var dateStr = currentYear + '-' + m + '-' + d;
+            var records = getRecordsByDate(dateStr);
+
+            var modal = document.getElementById('dateModal');
+            var modalDate = document.getElementById('modalDate');
+            var modalBody = document.getElementById('modalBody');
+
+            modalDate.textContent = currentYear + '年' + (currentMonth + 1) + '月' + day + '日';
+
+            if (records.length === 0) {
+                modalBody.innerHTML = '<div class="modal-empty">暂无记录</div>';
+            } else {
+                var html = '';
+                for (var i = 0; i < records.length; i++) {
+                    var r = records[i];
+                    html += '<div class="date-record-card">';
+                    html += '<div class="card-header">';
+                    html += '<span class="card-title">' + r.itemName + '</span>';
+                    html += '<span class="card-category">' + r.categoryName + '</span>';
+                    html += '</div>';
+                    if (r.desc) {
+                        html += '<div class="card-desc">' + r.desc + '</div>';
+                    }
+                    if (r.photo) {
+                        html += '<img class="card-img" src="' + r.photo + '" alt="' + r.itemName + '">';
+                    }
+                    html += '</div>';
+                }
+                modalBody.innerHTML = html;
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeDateModal() {
+            var modal = document.getElementById('dateModal');
+            modal.classList.remove('show');
+        }
+
+        /* ========== 照片墙渲染 ========== */
+        function renderGallery() {
+            var records = getRecords();
+            var empty = document.getElementById('stampsEmpty');
+            var grid = document.getElementById('stampsGrid');
+
+            // 只显示有照片的记录
+            var recordsWithPhotos = [];
+            for (var i = 0; i < records.length; i++) {
+                if (records[i].photo) {
+                    recordsWithPhotos.push(records[i]);
+                }
+            }
+
+            if (recordsWithPhotos.length === 0) {
+                empty.style.display = 'block';
+                grid.style.display = 'none';
+                return;
+            }
+
+            empty.style.display = 'none';
+            grid.style.display = 'grid';
+
+            // 倒序排列（最新在前）
+            var reversed = recordsWithPhotos.slice().reverse();
+
+            var html = '';
+            for (var j = 0; j < reversed.length; j++) {
+                var r = reversed[j];
+                html += '<div class="gallery-item" data-index="' + j + '">';
+                html += '<img src="' + r.photo + '" alt="' + r.itemName + '">';
+                html += '</div>';
+            }
+
+            grid.innerHTML = html;
+
+            // 绑定点击事件 - 打开大图预览
+            var items = grid.querySelectorAll('.gallery-item');
+            for (var k = 0; k < items.length; k++) {
+                items[k].addEventListener('click', function() {
+                    var index = parseInt(this.getAttribute('data-index'), 10);
+                    openPhotoModal(reversed[index]);
+                });
+            }
+        }
+
+        /* ========== 照片预览Modal ========== */
+        function openPhotoModal(record) {
+            var modal = document.getElementById('dateModal');
+            var modalDate = document.getElementById('modalDate');
+            var modalBody = document.getElementById('modalBody');
+
+            modalDate.textContent = record.itemName;
+
+            var html = '<div class="stamp-detail">';
+            html += '<img class="stamp-detail-img" src="' + record.photo + '" alt="' + record.itemName + '">';
+            html += '<div class="stamp-detail-info">';
+            html += '<span class="stamp-detail-category">' + record.categoryName + '</span>';
+            html += '<span class="stamp-detail-date">' + record.fullDate + '</span>';
+            html += '</div>';
+            if (record.desc) {
+                html += '<div class="stamp-detail-desc">"' + record.desc + '"</div>';
+            }
+            html += '</div>';
+
+            modalBody.innerHTML = html;
+            modal.classList.add('show');
+        }
+
+        /* ========== 洞察文案生成 ========== */
+        function calculateInsights() {
+            var records = getRecords();
+            var insights = {
+                totalCount: records.length,
+                thisMonthCount: 0,
+                thisMonth: getThisMonthString(),
+                topCategory: '',
+                insightText: ''
+            };
+
+            if (records.length === 0) {
+                insights.insightText = '还没有记录呢，开始你的第一次断舍离吧 ✦';
+                return insights;
+            }
+
+            // 计算本月记录数
+            var thisMonth = getThisMonthString();
+            for (var i = 0; i < records.length; i++) {
+                var recordMonth = records[i].date.substring(0, 7); // YYYY-MM
+                if (recordMonth === thisMonth) {
+                    insights.thisMonthCount++;
+                }
+            }
+
+            // 统计各分类数量
+            var categoryCount = {};
+            for (var j = 0; j < records.length; j++) {
+                var cat = records[j].categoryName;
+                categoryCount[cat] = (categoryCount[cat] || 0) + 1;
+            }
+
+            // 找出最常见的分类
+            var maxCount = 0;
+            for (var cat in categoryCount) {
+                if (categoryCount[cat] > maxCount) {
+                    maxCount = categoryCount[cat];
+                    insights.topCategory = cat;
+                }
+            }
+
+            // 生成洞察文案
+            insights.insightText = generateInsightText(insights);
+
+            return insights;
+        }
+
+        function getThisMonthString() {
+            var now = new Date();
+            var y = now.getFullYear();
+            var m = now.getMonth() + 1;
+            m = m < 10 ? '0' + m : m;
+            return y + '-' + m;
+        }
+
+        function generateInsightText(insights) {
+            var texts = [];
+
+            // 情感文案（根据断舍离历程给出鼓励）
+            var emotions = [];
+            if (insights.totalCount === 0) {
+                emotions.push('每一次放手，都是一次成长');
+            } else if (insights.totalCount < 5) {
+                emotions.push('每一次放手，都是一次成长');
+            } else if (insights.totalCount < 10) {
+                emotions.push('你在断舍离的路上越走越轻盈');
+            } else if (insights.totalCount < 20) {
+                emotions.push('你已学会了与物品优雅告别');
+            } else {
+                emotions.push('简约生活，成为你的日常');
+            }
+            texts.push(emotions[0]);
+
+            // 阶段性成就
+            if (insights.totalCount === 1) {
+                texts.push('完成了第一个断舍离');
+            } else if (insights.totalCount === 5) {
+                texts.push('解锁「五日小成」勋章');
+            } else if (insights.totalCount === 10) {
+                texts.push('解锁「十日达人」勋章');
+            } else if (insights.totalCount === 30) {
+                texts.push('解锁「月度坚持」勋章');
+            }
+
+            return texts.join(' · ');
+        }
+
+        /* ========== DOM加载完成 ========== */
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
